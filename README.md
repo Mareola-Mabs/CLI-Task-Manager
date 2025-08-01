@@ -52,7 +52,7 @@ exit                                  # Leave the CLI gracefully
 ## 🔨 Tech Specs
 
 - Built with **Node.js** and `readline` for terminal interaction
-- Uses `colors` for fancy output
+- Uses `chalk` for fancy output
 - Task data stored in `tasks.json` with structure:
 ```json
 {
@@ -98,7 +98,7 @@ Run this from inside the project directory:
 npm install
 ```
 
-> This grabs all required packages like `colors`, and sets up your CLI environment.
+> This grabs all required packages like `chalk`, and sets up your CLI environment.
 
 ### 3. 🔥 Start the Task Manager CLI
 ```bash
