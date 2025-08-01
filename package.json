@@ -1,0 +1,17 @@
+{
+  "name": "cli-task-manager",
+  "version": "1.0.0",
+  "description": "Personal CLI Task Manager built with Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "cli",
+    "task-manager",
+    "task",
+    "manager"
+  ],
+  "author": "Mareola",
+  "license": "ISC"
+}
