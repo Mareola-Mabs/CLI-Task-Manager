@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Personal CLI Task Manager built with Node.js",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "node index.js"
   },
