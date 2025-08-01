@@ -35,6 +35,7 @@ class TaskManager{
         this.showHelp = this.showHelp.bind(this)
         this.onClearTerminal = this.onClearTerminal.bind(this)
         this.onAdd = this.onAdd.bind(this)
+        this.onList = this.onList.bind(this)
 
 
 
@@ -102,6 +103,11 @@ class TaskManager{
             return this.onAdd(stringArr, taskFilePath)
         }
 
+        if (data.trim().toLowerCase() === 'list'){
+            
+            return this.onList()
+        }
+
 
         this.onStdOut()
 
@@ -145,6 +151,41 @@ class TaskManager{
 
     // To List Tasks
     onList(){
+
+        const statusHeader = "Status".padEnd(10);
+        const idHeader = "ID".padEnd(20);
+        const dueHeader = "Due date".padEnd(20);
+        const descHeader = "Description";
+        console.log(
+            "\n" + this.chalk.bold(statusHeader + idHeader + dueHeader + descHeader)
+        )
+        console.log(
+            this.chalk.gray(
+            "────────────────────────────────────────────────────────────────────────────────────────"
+            )
+        )
+
+        fs.readFile(taskFilePath, 'utf-8', (err, data)=>{
+            if (err) throw err
+
+            const newData = JSON.parse(data)
+            newData.forEach(item =>{
+                if (item.completed === false){
+                    console.log(`[ ]          ${item.id}                ${item.due}          ${item.description}`)
+                }
+                else{
+                    console.log(`[✔]          ${item.id}                ${item.due}          ${item.description}`)
+                }
+
+                
+            })
+
+
+        this.onStdOut()
+
+        })
+
+
 
     }
 
