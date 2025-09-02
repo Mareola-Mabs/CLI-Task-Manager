@@ -35,6 +35,7 @@ class TaskManager{
         this.onClearTerminal = this.onClearTerminal.bind(this)
         this.onAdd = this.onAdd.bind(this)
         this.onList = this.onList.bind(this)
+        this.onError = this.onError.bind(this)
 
 
         process.stdin.on('data', this.onData)
@@ -83,13 +84,13 @@ class TaskManager{
     // CLI Input Control
     onData(data){
 
-        const string = data.trim().toLowerCase()
+        const string = data.trim()
         const stringArr = string.split(' ')
 
         const commands = ['add', 'bulkadd', 'list', 'searchlist', 'complete', 'delete', 'archive', 'archiveview', 'archivesearch', 'archivedelete', 'archivedeleteall', 'recycleview', 'recycle', 'recycledelete', 'recycledeleteall', 'clear', 'help', 'exit']
 
         // Check if command is in list
-        if (!commands.includes(stringArr[0])) {
+        if (!commands.includes(stringArr[0].toLowerCase())) {
             console.log(this.chalk.red("❌ Command not recognized. Type 'help' to see the list of available commands."))
             return process.stdout.write(
             this.chalk.bgMagenta.black("Task-Manager-$> ")
@@ -111,11 +112,18 @@ class TaskManager{
         }
 
         if (stringArr[0] === 'add'){
+            if (stringArr.length < 2){
+                let type = "invalid argument list"
+                return this.onError(type, stringArr)
+            }
             return this.onAdd(stringArr, taskFilePath)
         }
 
-        if (data.trim().toLowerCase() === 'list'){
-            
+        if (stringArr[0] === 'list'){
+            if (stringArr.length > 1){
+                let type = "invalid shortCommand"
+                return this.onError(type, stringArr)
+            }
             return this.onList()
         }
 
@@ -309,7 +317,7 @@ class TaskManager{
         console.log(
         "  archive <id>               → Archive a completed task by id"
         )
-        console.log("  archiveView               → View archived tasks");
+        console.log("  archiveView                → View archived tasks");
         console.log("  archiveSearch <keyword>    → Search for an archived task");
         console.log(
         "  archiveDelete <id>         → Remove specific task from archive"
@@ -338,6 +346,22 @@ class TaskManager{
     // Exit
     onExit(){
         process.exit(0)
+    }
+
+    // Error Handler
+    onError(type, variable){
+        if(type == "invalid argument list"){
+            console.log(this.chalk.red(`❌ Command Error: Invalid argument list. Try '${variable[0]} <desc> <due-date>'`))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+        }
+        if(type == "invalid shortCommand"){
+            console.log(this.chalk.red(`❌ Command Error: Wrong use of command. Try only '${variable[0]}'`))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+        }
     }
 }
 
