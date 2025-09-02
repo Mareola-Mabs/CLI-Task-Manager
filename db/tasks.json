@@ -1,9 +1,26 @@
 [
-  { "id": 1, "description": "name", "completed": false, "due": "25-06-2025" },
+  {
+    "id": 1,
+    "desc": "nodejs class",
+    "due": "2025",
+    "completed": false,
+    "delId": 1,
+    "archived": false
+  },
   {
     "id": 2,
-    "description": "live class",
+    "desc": "nodejs class",
+    "due": "2026",
     "completed": false,
-    "due": "04-08-2025"
+    "delId": 2,
+    "archived": false
+  },
+  {
+    "id": 3,
+    "desc": "",
+    "due": "add",
+    "completed": false,
+    "delId": 3,
+    "archived": false
   }
 ]
