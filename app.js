@@ -35,6 +35,8 @@ class TaskManager{
         this.onAdd = this.onAdd.bind(this)
         this.onList = this.onList.bind(this)
         this.onError = this.onError.bind(this)
+        this.searchList = this.searchList.bind(this)
+        this.oncComplete = this.oncComplete.bind(this)
 
 
         process.stdin.on('data', this.onData)
@@ -158,6 +160,14 @@ class TaskManager{
                 return this.onError(type, stringArr)
             }
             return this.searchList(stringArr, taskFilePath)
+        }
+
+        if (stringArr[0] === 'complete'){
+            if (stringArr.length === 1 || stringArr.length > 2){
+                let type = "invalid argument keyword00"
+                return this.onError(type, stringArr)
+            }
+            return this.oncComplete(stringArr, taskFilePath)
         }
 
 
@@ -390,7 +400,59 @@ class TaskManager{
     }
 
     // To Complete a Task
-    oncComplete(){
+    oncComplete(stringArr, taskFilePath){
+        fs.readFile(taskFilePath, 'utf-8', (err, data)=>{
+            if (err) {
+                console.log(this.chalk.red("❌ File Error: Couldn't write to file. Kindly ensure 'storage file' is in place"))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+            }
+
+            if (data === ""){
+                console.log(this.chalk.green("Tasks list seems empty. Kindly use the 'add' command to add a new task"))
+                return this.onStdOut()
+        
+                
+            }
+
+            const newData = JSON.parse(data)
+
+            const dataIndex = newData.findIndex(item => item.id === Number(stringArr[1]))
+
+            if (dataIndex === -1){
+                console.log(this.chalk.green(`📕 Task with id ${stringArr[1]} not found`))
+                return this.onStdOut()
+            }
+
+            if (newData[dataIndex].completed === true){
+                console.log(this.chalk.green(`✅ This is already a completed task`))
+                return this.onStdOut()
+            }
+
+
+            newData[dataIndex].completed = true
+
+            const stringedData = JSON.stringify(newData)
+
+
+            fs.writeFile(taskFilePath, stringedData, err=>{
+                if (err) {
+                    console.log(this.chalk.red("❌ File Error: Couldn't write to file. Kindly ensure command is correct"))
+                    return process.stdout.write(
+                        this.chalk.bgMagenta.black("Task-Manager-$> ")
+                )
+                }
+
+
+            })
+
+        console.log("✅ Task is marked as complete")
+        this.onStdOut()
+            
+            
+        })
+
 
     }
 
@@ -507,6 +569,12 @@ class TaskManager{
         }
         if(type == "invalid argument keyword"){
             console.log(this.chalk.red(`❌ Command Error: Invalid argument keyword. Try '${variable[0]} <keyword> '`))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+        }
+        if(type == "invalid argument keyword00"){
+            console.log(this.chalk.red(`❌ Command Error: Invalid argument keyword. Try '${variable[0]} <id> '`))
                 return process.stdout.write(
                     this.chalk.bgMagenta.black("Task-Manager-$> ")
         )
