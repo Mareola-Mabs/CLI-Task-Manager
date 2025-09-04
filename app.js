@@ -1,5 +1,5 @@
 // Importing Inbuilt Modules
-import fs from 'node:fs' //File System Module
+import fs, { read } from 'node:fs' //File System Module
 import path from 'node:path' //File System Module
 
 
@@ -20,8 +20,7 @@ const taskFilePath = path.join(__dirname, 'db', 'tasks.json');
 // Task Manager Class
 class TaskManager{
     constructor(fs, path, chalk, taskFilePath){
-        process.stdin.setEncoding('utf8');
-
+        process.stdin.setEncoding('utf8')
 
         this.fs = fs
         this.path = path
@@ -81,8 +80,13 @@ class TaskManager{
         )
     }
 
+
+
+
     // CLI Input Control
     onData(data){
+
+        
 
         const string = data.trim()
         const stringArr = string.split(' ')
@@ -351,7 +355,7 @@ class TaskManager{
     // Error Handler
     onError(type, variable){
         if(type == "invalid argument list"){
-            console.log(this.chalk.red(`❌ Command Error: Invalid argument list. Try '${variable[0]} <desc> <due-date>'`))
+            console.log(this.chalk.red(`❌ Command Error: Invalid argument list. Try '${variable[0]} <desc> <due-date> '`))
                 return process.stdout.write(
                     this.chalk.bgMagenta.black("Task-Manager-$> ")
         )
