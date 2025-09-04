@@ -101,18 +101,30 @@ class TaskManager{
         )
         }
 
-        if (data.trim().toLowerCase() === 'help'){
+        if (stringArr[0] === 'help'){
+            if (stringArr.length > 1){
+                let type = "invalid shortCommand"
+                return this.onError(type, stringArr)
+            }
             return this.showHelp()
         }
 
-        if (data.trim().toLowerCase() === 'exit'){
+        if (stringArr[0] === 'exit'){
+            if (stringArr.length > 1){
+                let type = "invalid shortCommand"
+                return this.onError(type, stringArr)
+            }
             console.log("👋 Exiting...")
             return this.onExit()
         }
 
-        if (data.trim().toLowerCase() === 'clear'){
-            console.log("👋 Clearing Terminal...")
+        if (stringArr[0] === 'clear'){
+            if (stringArr.length > 1){
+                let type = "invalid shortCommand"
+                return this.onError(type, stringArr)
+            }
             return this.onClearTerminal()
+
         }
 
         if (stringArr[0] === 'add'){
@@ -123,12 +135,29 @@ class TaskManager{
             return this.onAdd(stringArr, taskFilePath)
         }
 
+
+        if (stringArr[0] === 'bulkadd'){
+            if (stringArr.length < 2){
+                let type = "invalid argument list"
+                return this.onError(type, stringArr)
+            }
+            return this.bulkAdd(stringArr, taskFilePath)
+        }
+
         if (stringArr[0] === 'list'){
             if (stringArr.length > 1){
                 let type = "invalid shortCommand"
                 return this.onError(type, stringArr)
             }
             return this.onList()
+        }
+
+        if (stringArr[0] === 'searchlist' || stringArr[0] === 'searchList'){
+            if (stringArr.length === 1 || stringArr.length > 2){
+                let type = "invalid argument keyword"
+                return this.onError(type, stringArr)
+            }
+            return this.searchList(stringArr, taskFilePath)
         }
 
 
@@ -195,16 +224,74 @@ class TaskManager{
     }
 
     // To BulkAdd Tasks
-    bulkAdd(){
+    bulkAdd(stringArr, taskFilePath){
+                fs.readFile(taskFilePath, 'utf-8', (err, data)=>{
+            if (err) {
+                console.log(this.chalk.red("❌ File Error: Couldn't write to file. Kindly ensure 'storage file' is in place"))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+            }
+
+            let dataString
+            let newData
+            let temp = ""
+
+            if (data === ""){
+
+                
+
+                console.log(stringArr)
+
+                // for(let i = 1; i < stringArr.length - 1; i++){
+                //     i !== stringArr.length - 2? temp += stringArr[i]+" " : temp += stringArr[i]
+                // }
+                // dataString = `[{"id": 1, "desc": "${temp}", "due": "${stringArr[stringArr.length - 1]}", "completed": false, "delId": 1, "archived": false}]`
+                
+            }
+        //     else{
+        //         try{
+        //             newData = JSON.parse(data)
+        //             let newId = newData[newData.length - 1].id + 1
+        //             let newDeleteId = newData[newData.length - 1].delId + 1
+
+        //             for(let i = 1; i < stringArr.length - 1; i++){
+        //             i !== stringArr.length - 2? temp += stringArr[i]+" " : temp += stringArr[i]
+        //         }
+        //             newData.push({"id": newId, "desc": temp, "due": stringArr[stringArr.length - 1], "completed": false, "delId": newDeleteId, "archived": false})
+                    
+        //             dataString = JSON.stringify(newData)
+                    
+        //         }
+        //         catch(err){
+                    
+        //         }
+        //     }
+        //     fs.writeFile(taskFilePath, dataString, err => {
+        //         if (err) {
+        //             console.log(this.chalk.red("❌ File Error: Couldn't write to file. Kindly ensure command is correct"))
+        //             return process.stdout.write(
+        //                 this.chalk.bgMagenta.black("Task-Manager-$> ")
+        // )
+        //         }
+        //     })
+            
+            
+
+            
+        })
+
+        console.log("✅ Task Added")
+        this.onStdOut()
 
     }
 
     // To List Tasks
     onList(){
 
-        const statusHeader = "Status".padEnd(10);
-        const idHeader = "ID".padEnd(20);
-        const dueHeader = "Due date".padEnd(20);
+        const statusHeader = "Status".padEnd(13);
+        const idHeader = "ID".padEnd(17);
+        const dueHeader = "Due date".padEnd(23);
         const descHeader = "Description";
         console.log(
             "\n" + this.chalk.bold(statusHeader + idHeader + dueHeader + descHeader)
@@ -216,7 +303,18 @@ class TaskManager{
         )
 
         fs.readFile(taskFilePath, 'utf-8', (err, data)=>{
-            if (err) throw err
+            if (err) {
+                console.log(this.chalk.red("❌ File Error: Could not read tasks from file. Kindly ensure 'storage file' is in place"))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+            }
+
+            if (data === ""){
+                console.log(this.chalk.green("Tasks list seems empty. Kindly use the 'add' command to add a new task"))
+                return this.onStdOut()
+
+            }
 
             const newData = JSON.parse(data)
             newData.forEach(item =>{
@@ -240,8 +338,55 @@ class TaskManager{
     }
 
     // To Search Task List
-    onSearchTask(){
+    searchList(stringArr, taskFilePath){
+        const statusHeader = "Status".padEnd(13);
+        const idHeader = "ID".padEnd(17);
+        const dueHeader = "Due date".padEnd(23);
+        const descHeader = "Description";
+        console.log(
+            "\n" + this.chalk.bold(statusHeader + idHeader + dueHeader + descHeader)
+        )
+        console.log(
+            this.chalk.gray(
+            "────────────────────────────────────────────────────────────────────────────────────────"
+            )
+        )
 
+
+        fs.readFile(taskFilePath, 'utf-8', (err, data)=>{
+            if (err) {
+                console.log(this.chalk.red("❌ File Error: Could not read tasks from file. Kindly ensure 'storage file' is in place"))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+            }
+
+            if (data === ""){
+                console.log(this.chalk.green("Tasks list seems empty. Kindly use the 'add' command to add a new task"))
+                return this.onStdOut()
+
+            }
+
+            const newData = JSON.parse(data)
+
+            const searchDesc = stringArr[1]
+            newData.forEach(item =>{
+                
+            if (item.desc.toLowerCase().includes(searchDesc)){
+                if (item.completed === false){
+                    console.log(`[ ]          ${item.id}                ${item.due}          ${item.desc}`)
+                }
+                else{
+                    console.log(`[✔]          ${item.id}                ${item.due}          ${item.desc}`)
+                }
+            }
+                
+            })
+
+
+        this.onStdOut()
+
+        })
     }
 
     // To Complete a Task
@@ -310,7 +455,7 @@ class TaskManager{
         "  add <desc> <due>           → Add a new task with optional due date"
         )
         console.log(
-        "  bulkadd <desc1> <due1> ... → Add multiple tasks with paired due dates"
+        "  bulkAdd <desc1> <due1> ... → Add multiple tasks with paired due dates"
         )
         console.log("  list                       → List all tasks");
         console.log("  searchList <keyword>       → Search for a task");
@@ -356,6 +501,12 @@ class TaskManager{
     onError(type, variable){
         if(type == "invalid argument list"){
             console.log(this.chalk.red(`❌ Command Error: Invalid argument list. Try '${variable[0]} <desc> <due-date> '`))
+                return process.stdout.write(
+                    this.chalk.bgMagenta.black("Task-Manager-$> ")
+        )
+        }
+        if(type == "invalid argument keyword"){
+            console.log(this.chalk.red(`❌ Command Error: Invalid argument keyword. Try '${variable[0]} <keyword> '`))
                 return process.stdout.write(
                     this.chalk.bgMagenta.black("Task-Manager-$> ")
         )
